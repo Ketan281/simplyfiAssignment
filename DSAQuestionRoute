@@ -1,0 +1,63 @@
+class Graph {
+  constructor() {
+    this.adjacencyList = new Map();
+  }
+
+  addVertex(vertex) {
+    if (!this.adjacencyList.has(vertex)) {
+      this.adjacencyList.set(vertex, []);
+    }
+  }
+
+  addEdge(source, destination) {
+    this.adjacencyList.get(source).push(destination);
+  }
+
+  findRoute(start) {
+    const visited = new Set();
+    const route = [];
+
+    const dfs = (city) => {
+      if (!visited.has(city)) {
+        visited.add(city);
+        route.push(city);
+
+        const neighbors = this.adjacencyList.get(city);
+        for (const neighbor of neighbors) {
+          dfs(neighbor);
+        }
+      }
+    };
+
+    dfs(start);
+    return route;
+  }
+}
+
+const graph = new Graph();
+
+// Add cities as vertices
+const cities = ["Amsterdam", "Kiev", "Zurich", "Prague", "Berlin", "Barcelona"];
+for (const city of cities) {
+  graph.addVertex(city);
+}
+
+// Add available train routes as edges
+const trainTickets = [
+  ["Kiev", "Prague"],
+  ["Prague", "Zurich"],
+  ["Zurich", "Amsterdam"],
+  ["Amsterdam", "Barcelona"],
+  ["Barcelona", "Berlin"],
+  ["Berlin", "Kiev"],
+];
+
+for (const [source, destination] of trainTickets) {
+  graph.addEdge(source, destination);
+}
+
+// Start from Kiev (as you know your son started there)
+const startingCity = "Kiev";
+const route = graph.findRoute(startingCity);
+
+console.log("Route your son took:", route.join(" -> "));
